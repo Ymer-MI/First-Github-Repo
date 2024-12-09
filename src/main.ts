@@ -1,6 +1,4 @@
-import `./style.css`;
+import "./style.css";
+import { e as elements } from "./helpers/elementCreationHelpers";
 
-const h1 = document.createElement("h1");
-h1.innerHTML = "Hello World!";
-
-document.getElementById("app")?.appendChild(h1);
+document.getElementById("app")?.append(elements.heading.primary(`Hello World by Ymer Nordström 2024`), elements.heading.secondary(`This is the start of the project.`));
