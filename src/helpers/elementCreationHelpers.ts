@@ -1,16 +1,13 @@
 export const e = (() => {
-    const createElement = (e: string, t?: string, cN?: string, id?:string) => {
-        return Object.assign(document.createElement(`${e}`), {
+    const createElement = (e: string, t?: string, cN?: string, id?:string) => Object.assign(document.createElement(`${e}`), {
             innerHTML: t || '',
             id: id || '',
             className: cN || ''
-        })
-    }, createHeading = (n: number, t: string, cN?: string, id?:string) => {
-        return createElement(`h${n}`, t, `heading ${cN || ''}`.trim(), id) as HTMLHeadingElement
-    }, createInpOrBtn = (e: string, str?: string, cN?: string, t?: string, id?: string) => {
+        }),
+    createHeading = (n: number, t: string, cN?: string, id?:string) => createElement(`h${n}`, t, `heading ${cN || ''}`.trim(), id) as HTMLHeadingElement, 
+    createInpOrBtn = (e: string, t?: string, cN?: string, id?: string) => {
         const el = createElement(e, cN, id);
         return Object.assign(e === 'input' ? el as HTMLInputElement : el as HTMLButtonElement, {
-            innerHTML: str,
             type: t || ''
         })
     }
@@ -25,7 +22,16 @@ export const e = (() => {
             },
             tertiary: (text: string, className?: string, id?: string) => {
                 return createHeading(3, text, className, id);
-            }
+            },
+            quaternary: (text: string, className?: string, id?: string) => {
+                return createHeading(4, text, className, id);
+            },
+            quinary: (text: string, className?: string, id?: string) => {
+                return createHeading(5, text, className, id);
+            },
+            senary: (text: string, className?: string, id?: string) => {
+                return createHeading(6, text, className, id);
+            },
         },
         div: (className?: string, id?: string) => {
             return createElement('div', className, id) as HTMLDivElement;
@@ -39,11 +45,17 @@ export const e = (() => {
         span: (className?: string, id?: string) => {
             return createElement('span', className, id) as HTMLSpanElement;
         },
-        input: (type?: string, className?: string, id?: string) => {
-            return createInpOrBtn('input', className, type || 'text', id) as HTMLInputElement;
+        input: (type = 'text', value?: string | boolean, isValue = false, className?: string, id?: string) => {
+            return Object.assign(createInpOrBtn('input', type, className, id) as HTMLInputElement, {
+                value: isValue && typeof value === 'string' ? value : '',
+                placeholder: !isValue && typeof value === 'string' ? value : '',
+                checked: isValue && typeof value === 'boolean' ? value : false 
+            });
         },
-        button: (text: string, type?: string, className?: string, id?: string) => {
-            return createInpOrBtn('button', text, className, type, id) as HTMLButtonElement;
+        button: ( text: string, type = 'button', className?: string, id?: string) => {
+            return Object.assign(createInpOrBtn('button', type, className, id) as HTMLButtonElement, {
+                innerHTML: text || ''
+            });
         }
     }
 })();
