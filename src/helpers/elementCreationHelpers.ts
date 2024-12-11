@@ -16,7 +16,10 @@ export const e = (() => {
 
     return {
         settings: {
-            setDefaultHeadingClass: (className: string) => {DEFAULTS.HEADING_CLASS = className}
+            defaultHeadingClass: {
+                set: (className: string) => DEFAULTS.HEADING_CLASS = className,
+                get: () => DEFAULTS.HEADING_CLASS
+            }
         },
         heading: {
             primary: (text: string, className?: string, id?: string) => {
