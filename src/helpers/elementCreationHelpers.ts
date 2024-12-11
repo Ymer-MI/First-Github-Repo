@@ -1,10 +1,12 @@
 export const e = (() => {
-    const createElement = (e: string, t?: string, cN?: string, id?:string) => Object.assign(document.createElement(`${e}`), {
+    const DEFAULTS = {
+        HEADING_CLASS: ''
+    }, createElement = (e: string, t?: string, cN?: string, id?:string) => Object.assign(document.createElement(`${e}`), {
             innerHTML: t || '',
             id: id || '',
             className: cN || ''
         }),
-    createHeading = (n: number, t: string, cN?: string, id?:string) => createElement(`h${n}`, t, `heading ${cN || ''}`.trim(), id) as HTMLHeadingElement, 
+    createHeading = (n: number, t: string, cN?: string, id?:string) => createElement(`h${n}`, t, `${DEFAULTS.HEADING_CLASS} ${cN || ''}`.trim(), id) as HTMLHeadingElement, 
     createInpOrBtn = (e: string, t?: string, cN?: string, id?: string) => {
         const el = createElement(e, cN, id);
         return Object.assign(e === 'input' ? el as HTMLInputElement : el as HTMLButtonElement, {
@@ -13,6 +15,9 @@ export const e = (() => {
     }
 
     return {
+        settings: {
+            setDefaultHeadingClass: (className: string) => {DEFAULTS.HEADING_CLASS = className}
+        },
         heading: {
             primary: (text: string, className?: string, id?: string) => {
                 return createHeading(1, text, className, id);
