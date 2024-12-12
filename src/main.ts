@@ -1,7 +1,7 @@
 import "./style.css";
 import { e as elements } from "./helpers/elementCreationHelpers";
 
-const DEFAULT_HEADING_CLASSES = elements.settings.defaultHeadingClass.set('heading');
+const DEFAULT_HEADING_CLASSES = elements.settings.defaultHeadingClass.set('heading'), formID = 'testForm';
 
 console.log(
     {DEFAULT_HEADING_CLASSES: DEFAULT_HEADING_CLASSES},
@@ -16,5 +16,7 @@ document.getElementById("app")?.append(
     elements.input('checkbox', true),
     elements.input('checkbox'),
     elements.button('Button'),
-    elements.form([elements.input(), elements.input('email', 'some.email@mail.com'), elements.input('checkbox')])
+    elements.form([elements.input(), elements.input('email', 'some.email@mail.com'), elements.input('checkbox')], 'form', formID)
 );
+
+document.getElementById(formID)?.append(elements.button('Secound Button'))

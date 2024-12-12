@@ -54,7 +54,7 @@ export const e = (() => {
             return createElement('span', className, id) as HTMLSpanElement;
         },
         form: (inputs?: HTMLInputElement[], className?: string, id?: string) => {
-            const f = createElement('form', className, id) as HTMLFormElement;
+            const f = createElement('form', '', className, id) as HTMLFormElement;
             
             inputs ? f.append(...inputs) : f;
 
