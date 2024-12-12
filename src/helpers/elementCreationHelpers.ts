@@ -53,11 +53,18 @@ export const e = (() => {
         span: (className?: string, id?: string) => {
             return createElement('span', className, id) as HTMLSpanElement;
         },
+        form: (inputs?: HTMLInputElement[], className?: string, id?: string) => {
+            const f = createElement('form', className, id) as HTMLFormElement;
+            
+            inputs ? f.append(...inputs) : f;
+
+            return f;
+        },
         input: (type = 'text', value?: string | boolean, isValue = false, className?: string, id?: string) => {
             return Object.assign(createInpOrBtn('input', type, className, id) as HTMLInputElement, {
                 value: isValue && typeof value === 'string' ? value : '',
                 placeholder: !isValue && typeof value === 'string' ? value : '',
-                checked: isValue && typeof value === 'boolean' ? value : false 
+                checked: typeof value === 'boolean' ? value : false 
             });
         },
         button: ( text: string, type = 'button', className?: string, id?: string) => {

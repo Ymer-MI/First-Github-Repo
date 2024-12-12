@@ -13,7 +13,8 @@ document.getElementById("app")?.append(
     elements.heading.secondary(`Testing that the element helpers are working`),
     elements.input('text', 'Placeholder'),
     elements.input('email', 'some.email@mail.com', true),
-    elements.input('checkbox', true, true),
+    elements.input('checkbox', true),
     elements.input('checkbox'),
-    elements.button('Button')
+    elements.button('Button'),
+    elements.form([elements.input(), elements.input('email', 'some.email@mail.com'), elements.input('checkbox')])
 );
