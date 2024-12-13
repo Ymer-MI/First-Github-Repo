@@ -53,21 +53,47 @@ export const e = (() => {
         span: (className?: string, id?: string) => {
             return createElement('span', className, id) as HTMLSpanElement;
         },
-        form: (inputs?: HTMLInputElement[], className?: string, id?: string) => {
-            const f = createElement('form', '', className, id) as HTMLFormElement;
+        img: (src: string, alt: string, width?: number, height?: number, className?: string, id?: string) => {
+            return Object.assign(createElement('img', '', className, id) as HTMLImageElement, {
+                src: src,
+                alt: alt || '',
+                width: width,
+                height: height
+            });
+        },
+        form: (elements?: {inputs: HTMLInputElement[], buttons?: HTMLButtonElement[], labels?: HTMLLabelElement[]}, action = 'void();', className?: string, id?: string) => {
+            const f = Object.assign(createElement('form', '', className, id) as HTMLFormElement, {
+                action: action
+            });
             
-            inputs ? f.append(...inputs) : f;
+            if (elements) {
+                elements.inputs && elements.labels && elements.inputs.length === elements.labels.length ? (() => {
+                    for (let i = 0; i < elements.inputs.length; i++) { f.append(elements.labels[i], elements.inputs[i]) }
+                })() : f.append(...elements.inputs);
+
+                if (elements.buttons) {
+                    f.append(...elements.buttons);
+                }
+            }
 
             return f;
         },
-        input: (type = 'text', value?: string | boolean, isValue = false, className?: string, id?: string) => {
+        label: (text: string, forInput: string, className?: string, id?: string) => {
+            const l = createElement('label', text, className, id) as HTMLLabelElement
+
+            l.setAttribute('for', forInput);
+
+            return l;
+        },
+        input: (name: string, type = 'text', value?: string | boolean, isValue = false, className?: string, id?: string) => {
             return Object.assign(createInpOrBtn('input', type, className, id) as HTMLInputElement, {
+                name: name,
                 value: isValue && typeof value === 'string' ? value : '',
                 placeholder: !isValue && typeof value === 'string' ? value : '',
                 checked: typeof value === 'boolean' ? value : false 
             });
         },
-        button: ( text: string, type = 'button', className?: string, id?: string) => {
+        button: (text: string, type = 'button', className?: string, id?: string) => {
             return Object.assign(createInpOrBtn('button', type, className, id) as HTMLButtonElement, {
                 innerHTML: text || ''
             });
