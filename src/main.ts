@@ -18,21 +18,32 @@ document.getElementById("app")?.append(
   elements.form.input('checkboxFalseTest', 'checkbox'),
   elements.form.button('Button'),
   elements.form.base({
-    inputs: [
-      elements.form.input('basicTestInArray'),
-      elements.form.input('emailTestInArray', 'email', {value: 'some.email@mail.com'}),
-      elements.form.input('checkboxTestInArray', 'checkbox')
+    fieldset: [
+      elements.form.fieldset('Legend 1:', {
+        inputs: [
+          elements.form.input('basicTestInArray'),
+          elements.form.input('checkboxTestInArray', 'checkbox')
+        ],
+        labels: [
+          elements.form.label('Text:', 'basicTestInArray'),
+          elements.form.label('Checkbox:', 'checkboxTestInArray')
+        ]
+      }),
+      elements.form.fieldset('Legend 2:', {
+        inputs: [
+          elements.form.input('emailTestInArray', 'email', {value: 'some.email@mail.com'})
+        ],
+        labels: [
+          elements.form.label('Email:', 'emailTestInArray')
+        ]
+      })
     ],
     buttons: [
       elements.form.button('Reset', 'reset'),
       elements.form.button('Submit', 'submit')
-    ],
-    labels: [
-      elements.form.label('Text:', 'basicTestInArray'),
-      elements.form.label('Email:', 'emailTestInArray'),
-      elements.form.label('Checkbox:', 'checkboxTestInArray')
-    ]}, undefined, {className: 'form', id: formID} as BasicAttributes),
-    elements.img('/src/img/todo_list.svg', 'Todo list', 200, 200)
+    ]
+  }, undefined, {className: 'form', id: formID} as BasicAttributes),
+  elements.img('/src/img/todo_list.svg', 'Todo list', 200, 200)
 );
 
 document.getElementById(formID)?.addEventListener('submit', () => {
