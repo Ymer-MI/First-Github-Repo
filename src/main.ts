@@ -11,24 +11,24 @@ const DEFAULT_HEADING_CLASSES = elements.settings.defaultHeadingClass.set('headi
   document.getElementById("app")?.append(
     elements.heading.primary(`Test`, 'primary'),
     elements.heading.secondary(`Testing that the element helpers are working`),
-    elements.input('placeholderTest', 'text', 'Placeholder'),
-    elements.input('emailTest', 'email', 'some.email@mail.com', true),
-    elements.input('checkboxTrueTest', 'checkbox', true),
-    elements.input('checkboxFalseTest', 'checkbox'),
-    elements.button('Button'),
-    elements.form({
+    elements.form.input('placeholderTest', 'text', 'Placeholder'),
+    elements.form.input('emailTest', 'email', 'some.email@mail.com', true),
+    elements.form.input('checkboxTrueTest', 'checkbox', true),
+    elements.form.input('checkboxFalseTest', 'checkbox'),
+    elements.form.button('Button'),
+    elements.form.base({
       inputs: [
-        elements.input('basicTestInArray'),
-        elements.input('emailTestInArray', 'email', 'some.email@mail.com'),
-        elements.input('checkboxTestInArray', 'checkbox')
+        elements.form.input('basicTestInArray'),
+        elements.form.input('emailTestInArray', 'email', 'some.email@mail.com'),
+        elements.form.input('checkboxTestInArray', 'checkbox')
       ],
       buttons: [
-        elements.button('Secound Button')
+        elements.form.button('Secound Button')
       ],
       labels: [
-        elements.label('Text:', 'basicTestInArray'),
-        elements.label('Email:', 'emailTestInArray'),
-        elements.label('Checkbox:', 'checkboxTestInArray')
+        elements.form.label('Text:', 'basicTestInArray'),
+        elements.form.label('Email:', 'emailTestInArray'),
+        elements.form.label('Checkbox:', 'checkboxTestInArray')
       ]}, undefined, 'form', formID),
       elements.img('/src/img/todo_list.svg', 'Todo list', 200, 200)
   );
