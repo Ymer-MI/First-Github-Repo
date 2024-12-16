@@ -23,3 +23,12 @@ body {
     color: #0f0;
   }
 }
+
+fieldset {
+  background-color: aqua;
+  
+  & legend {
+    background-color: rebeccapurple;
+    color: yellow;
+  }
+}
