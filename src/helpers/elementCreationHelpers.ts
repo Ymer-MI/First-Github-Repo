@@ -1,14 +1,15 @@
+import { BasicAttributes } from "./IBasicAttributes";
+
 export const e = (() => {
     const DEFAULTS = {
-        HEADING_CLASS: ''
-    }, createElement = (e: string, t?: string, cN?: string, id?:string) => Object.assign(document.createElement(`${e}`), {
-            innerHTML: t || '',
-            id: id || '',
-            className: cN || ''
+        HEADING_CLASS: '' as HTMLElement['className']
+    }, createElement = (e: HTMLElement['tagName'], bA?: BasicAttributes) => Object.assign(document.createElement(`${e}`), {
+            id: bA?.id || '',
+            className: bA?.className || ''
         }),
-    createHeading = (n: number, t: string, cN?: string, id?:string) => createElement(`h${n}`, t, `${DEFAULTS.HEADING_CLASS} ${cN || ''}`.trim(), id) as HTMLHeadingElement, 
-    createInpOrBtn = (e: string, t?: string, cN?: string, id?: string) => {
-        const el = createElement(e, cN, id);
+    createHeading = (n: number, t: HTMLHeadingElement['innerHTML'], bA?: BasicAttributes) => Object.assign(createElement(`h${n}`, {className: `${DEFAULTS.HEADING_CLASS} ${bA?.className || ''}`.trim(), id: bA?.id || ''}) as HTMLHeadingElement, {innerHTML: t || ''}), 
+    createInpOrBtn = (e: HTMLInputElement['tagName'] | HTMLButtonElement['tagName'], t?: HTMLInputElement['type'] | HTMLButtonElement['type'], bA?: BasicAttributes) => {
+        const el = createElement(e, bA);
         return Object.assign(e === 'input' ? el as HTMLInputElement : el as HTMLButtonElement, {
             type: t || ''
         })
@@ -17,59 +18,64 @@ export const e = (() => {
     return {
         settings: {
             defaultHeadingClass: {
-                set: (className: string) => DEFAULTS.HEADING_CLASS = className,
+                set: (className: HTMLElement['className']) => DEFAULTS.HEADING_CLASS = className,
                 get: () => DEFAULTS.HEADING_CLASS
             }
         },
         heading: {
-            primary: (text: string, className?: string, id?: string) => {
-                return createHeading(1, text, className, id);
+            primary: (text: HTMLHeadingElement['innerHTML'], BasicAttributes?: BasicAttributes) => {
+                return createHeading(1, text, BasicAttributes);
             },
-            secondary: (text: string, className?: string, id?: string) => {
-                return createHeading(2, text, className, id);
+            secondary: (text: HTMLHeadingElement['innerHTML'], BasicAttributes?: BasicAttributes) => {
+                return createHeading(2, text, BasicAttributes);
             },
-            tertiary: (text: string, className?: string, id?: string) => {
-                return createHeading(3, text, className, id);
+            tertiary: (text: HTMLHeadingElement['innerHTML'], BasicAttributes?: BasicAttributes) => {
+                return createHeading(3, text, BasicAttributes);
             },
-            quaternary: (text: string, className?: string, id?: string) => {
-                return createHeading(4, text, className, id);
+            quaternary: (text: HTMLHeadingElement['innerHTML'], BasicAttributes?: BasicAttributes) => {
+                return createHeading(4, text, BasicAttributes);
             },
-            quinary: (text: string, className?: string, id?: string) => {
-                return createHeading(5, text, className, id);
+            quinary: (text: HTMLHeadingElement['innerHTML'], BasicAttributes?: BasicAttributes) => {
+                return createHeading(5, text, BasicAttributes);
             },
-            senary: (text: string, className?: string, id?: string) => {
-                return createHeading(6, text, className, id);
+            senary: (text: HTMLHeadingElement['innerHTML'], BasicAttributes?: BasicAttributes) => {
+                return createHeading(6, text, BasicAttributes);
             },
         },
-        div: (className?: string, id?: string) => {
-            return createElement('div', className, id) as HTMLDivElement;
+        div: (BasicAttributes?: BasicAttributes) => {
+            return createElement('div', BasicAttributes) as HTMLDivElement;
         },
-        ul: (className?: string, id?: string) => {
-            return createElement('ul', className, id) as HTMLUListElement;
+        ul: (BasicAttributes?: BasicAttributes) => {
+            return createElement('ul', BasicAttributes) as HTMLUListElement;
         },
-        li: (className?: string, id?: string) => {
-            return createElement('li', className, id) as HTMLLIElement;
+        li: (BasicAttributes?: BasicAttributes) => {
+            return createElement('li', BasicAttributes) as HTMLLIElement;
         },
-        span: (className?: string, id?: string) => {
-            return createElement('span', className, id) as HTMLSpanElement;
+        span: (BasicAttributes?: BasicAttributes) => {
+            return createElement('span', BasicAttributes) as HTMLSpanElement;
         },
-        img: (src: string, alt: string, width?: number, height?: number, className?: string, id?: string) => {
-            return Object.assign(createElement('img', '', className, id) as HTMLImageElement, {
+        img: (src: HTMLImageElement['src'], alt: HTMLImageElement['alt'], width?: HTMLImageElement['width'], height?: HTMLImageElement['height'], BasicAttributes?: BasicAttributes) => {
+            return Object.assign(createElement('img', BasicAttributes) as HTMLImageElement, {
                 src: src,
                 alt: alt || '',
                 width: width,
                 height: height
             });
         },
-        form:{ 
-            base: (elements?: {inputs: HTMLInputElement[], buttons?: HTMLButtonElement[], labels?: HTMLLabelElement[]}, action = 'void();', className?: string, id?: string) => {
-                const f = Object.assign(createElement('form', '', className, id) as HTMLFormElement, {
-                    action: action
+        form:{
+            base: (elements?: {inputs: HTMLInputElement[], buttons: HTMLButtonElement[], labels: HTMLLabelElement[]}, action?: HTMLFormElement['action'], BasicAttributes?: BasicAttributes) => {
+                const f = Object.assign(createElement('form', BasicAttributes) as HTMLFormElement, {
+                    action: action || 'void();'
                 });
                 
+                f.addEventListener('submit', e => {
+                    e.preventDefault();
+                })
+
                 if (elements) {
                     elements.inputs && elements.labels && elements.inputs.length === elements.labels.length ? (() => {
-                        for (let i = 0; i < elements.inputs.length; i++) { f.append(elements.labels[i], elements.inputs[i]) }
+                        for (let i = 0; i < elements.inputs.length; i++) { f.append(elements.labels[i], elements.inputs[i]); console.log('appended both');
+                         }
                     })() : f.append(...elements.inputs);
 
                     if (elements.buttons) {
@@ -79,23 +85,22 @@ export const e = (() => {
 
                 return f;
             },
-            label: (text: string, forInput: string, className?: string, id?: string) => {
-                const l = createElement('label', text, className, id) as HTMLLabelElement
-
-                l.setAttribute('for', forInput);
-
-                return l;
-            },
-            input: (name: string, type = 'text', value?: string | boolean, isValue = false, className?: string, id?: string) => {
-                return Object.assign(createInpOrBtn('input', type, className, id) as HTMLInputElement, {
-                    name: name,
-                    value: isValue && typeof value === 'string' ? value : '',
-                    placeholder: !isValue && typeof value === 'string' ? value : '',
-                    checked: typeof value === 'boolean' ? value : false 
+            label: (text: HTMLLabelElement['innerHTML'], forInput: HTMLLabelElement['htmlFor'], BasicAttributes?: BasicAttributes) => {
+                return Object.assign(createElement('label', BasicAttributes) as HTMLLabelElement, {
+                    innerHTML: text, 
+                    htmlFor: forInput
                 });
             },
-            button: (text: string, type = 'button', className?: string, id?: string) => {
-                return Object.assign(createInpOrBtn('button', type, className, id) as HTMLButtonElement, {
+            input: (name: HTMLInputElement['name'], type?: HTMLInputElement['type'], optionalAttributes?: {value?: HTMLInputElement['value'], isValue?: boolean}, BasicAttributes?: BasicAttributes) => {
+                return Object.assign(createInpOrBtn('input', type || 'text', BasicAttributes) as HTMLInputElement, {
+                    name: name,
+                    value: optionalAttributes?.isValue && typeof optionalAttributes?.value === 'string' ? optionalAttributes?.value : '',
+                    placeholder: !optionalAttributes?.isValue && typeof optionalAttributes?.value === 'string' ? optionalAttributes?.value : '',
+                    checked: optionalAttributes?.value?.toLowerCase() === 'true' ? true : false 
+                });
+            },
+            button: (text: HTMLButtonElement['innerHTML'], type?: HTMLButtonElement['type'], BasicAttributes?: BasicAttributes) => {
+                return Object.assign(createInpOrBtn('button', type || 'button', BasicAttributes) as HTMLButtonElement, {
                     innerHTML: text || ''
                 });
             }
