@@ -3,16 +3,28 @@ import { BasicAttributes } from "./IBasicAttributes";
 export const e = (() => {
     const DEFAULTS = {
         HEADING_CLASS: '' as HTMLElement['className']
-    }, createElement = (e: HTMLElement['tagName'], bA?: BasicAttributes) => Object.assign(document.createElement(`${e}`), {
-            id: bA?.id || '',
-            className: bA?.className || ''
-        }),
-    createHeading = (n: number, t: HTMLHeadingElement['innerHTML'], bA?: BasicAttributes) => Object.assign(createElement(`h${n}`, {className: `${DEFAULTS.HEADING_CLASS} ${bA?.className || ''}`.trim(), id: bA?.id || ''}) as HTMLHeadingElement, {innerHTML: t || ''}), 
+    },
+    createElement = (e: HTMLElement['tagName'], bA?: BasicAttributes) => Object.assign(document.createElement(`${e}`), {id: bA?.id || '', className: bA?.className || ''}),
+    createHeading = (n: number, t: HTMLHeadingElement['innerHTML'], bA?: BasicAttributes) => Object.assign(createElement(`h${n}`, {className: `${DEFAULTS.HEADING_CLASS} ${bA?.className || ''}`.trim(), id: bA?.id || ''}) as HTMLHeadingElement, {innerHTML: t || ''}),
+    setScaleImgOrVideo = (e: HTMLImageElement | HTMLVideoElement, width?: HTMLImageElement['width'] | HTMLVideoElement['width'], height?: HTMLImageElement['height'] | HTMLVideoElement['height']) => {
+        if (width) {
+            e.width = width;
+        }
+
+        if (height) {
+            e.height = height;
+        }
+    },
     createInpOrBtn = (e: HTMLInputElement['tagName'] | HTMLButtonElement['tagName'], t?: HTMLInputElement['type'] | HTMLButtonElement['type'], bA?: BasicAttributes) => {
         const el = createElement(e, bA);
         return Object.assign(e.toLowerCase() === 'input' ? el as HTMLInputElement : el as HTMLButtonElement, {
             type: t || ''
         })
+    },
+    appendInputsAndLabels = (e: HTMLFormElement | HTMLFieldSetElement, elements: {labels?: HTMLLabelElement[], inputs: HTMLInputElement[]}) => {
+        elements.inputs && elements.labels && elements.inputs.length === elements.labels.length ? elements.labels.forEach((item, index) => {
+                e.append(item, elements.inputs[index]);
+             }) : e.append(...elements.inputs);
     }
 
     return {
@@ -54,13 +66,25 @@ export const e = (() => {
         span: (basicAttributes?: BasicAttributes) => {
             return createElement('span', basicAttributes) as HTMLSpanElement;
         },
-        img: (src: HTMLImageElement['src'], alt: HTMLImageElement['alt'], width?: HTMLImageElement['width'], height?: HTMLImageElement['height'], basicAttributes?: BasicAttributes) => {
-            return Object.assign(createElement('img', basicAttributes) as HTMLImageElement, {
+        img: (src: HTMLImageElement['src'], alt: HTMLImageElement['alt'], optionalAttributes?: {width?: HTMLImageElement['width'], height?: HTMLImageElement['height']}, basicAttributes?: BasicAttributes) => {
+            const i = Object.assign(createElement('img', basicAttributes) as HTMLImageElement, {
                 src: src,
-                alt: alt || '',
-                width: width,
-                height: height
+                alt: alt || ''
             });
+
+            setScaleImgOrVideo(i, optionalAttributes?.width, optionalAttributes?.height);
+            
+            return i; 
+        },
+        video: (src: HTMLVideoElement['src'], optionalAttributes?: {width?: HTMLImageElement['width'], height?: HTMLImageElement['height']}, basicAttributes?: BasicAttributes) => {
+            const v = Object.assign(createElement('video', basicAttributes) as HTMLVideoElement, {
+                src: src,
+                controls: true
+            });
+
+            setScaleImgOrVideo(v, optionalAttributes?.width, optionalAttributes?.height);
+
+            return v;
         },
         form:{
             base: (elements?: {fieldset?: HTMLFieldSetElement[], labels?: HTMLLabelElement[], inputs?: HTMLInputElement[], buttons?: HTMLButtonElement[]}, action?: HTMLFormElement['action'], basicAttributes?: BasicAttributes) => {
@@ -72,37 +96,29 @@ export const e = (() => {
                     e.preventDefault();
                 })
 
-                if (elements) {
-                    if (elements.fieldset) {
-                        f.append(...elements.fieldset)
-                    }
+                if (elements?.fieldset) {
+                    f.append(...elements.fieldset)
+                }
 
-                    if (elements.inputs) {
-                        elements.labels && elements.inputs.length === elements.labels.length ? (() => {
-                            for (let i = 0; i < elements.inputs.length; i++) { f.append(elements.labels[i], elements.inputs[i]); console.log('appended both');
-                            }
-                        })() : f.append(...elements.inputs);
-                    }
-                    
-                    if (elements.buttons) {
-                        f.append(...elements.buttons);
-                    }
+                if (elements?.inputs) {
+                    appendInputsAndLabels(f, {labels: elements.labels, inputs: elements.inputs});
+                }
+                
+                if (elements?.buttons) {
+                    f.append(...elements.buttons);
                 }
 
                 return f;
             },
-            fieldset: (text: HTMLLegendElement['innerHTML'], elements?: {labels: HTMLLabelElement[], inputs: HTMLInputElement[], buttons?: HTMLButtonElement[]}, basicAttributes?: BasicAttributes) => {
+            fieldset: (text: HTMLLegendElement['innerHTML'], elements?: {labels?: HTMLLabelElement[], inputs: HTMLInputElement[], buttons?: HTMLButtonElement[]}, basicAttributes?: BasicAttributes) => {
                 const f = createElement('fieldset', basicAttributes) as HTMLFieldSetElement;
                 
                 f.append(Object.assign(createElement('legend') as HTMLLegendElement, {
                     innerHTML: text
-                }))
-
+                }));
+                
                 if (elements) {
-                    elements.inputs && elements.labels && elements.inputs.length === elements.labels.length ? (() => {
-                        for (let i = 0; i < elements.inputs.length; i++) { f.append(elements.labels[i], elements.inputs[i]); console.log('appended both');
-                         }
-                    })() : f.append(...elements.inputs);
+                    appendInputsAndLabels(f, {labels: elements?.labels, inputs: elements?.inputs});
                 }
 
                 return f;

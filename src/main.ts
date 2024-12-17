@@ -9,7 +9,7 @@ console.log(
   {elements_settings_defaultHeadingClass_get: elements.settings.defaultHeadingClass.get()}
 );
 
-document.getElementById("app")?.append(
+document.getElementById('app')?.append(
   elements.heading.primary(`Test`, {className: 'primary'} as BasicAttributes),
   elements.heading.secondary(`Testing that the element helpers are working`),
   elements.form.input('placeholderTest', 'text', {value: 'Placeholder'}),
@@ -38,14 +38,24 @@ document.getElementById("app")?.append(
         ]
       })
     ],
+    labels: [
+      elements.form.label('Solve the captcha:', 'captcha')
+    ],
+    inputs: [
+      elements.form.input('captcha')
+    ],
     buttons: [
       elements.form.button('Reset', 'reset'),
       elements.form.button('Submit', 'submit')
     ]
   }, undefined, {className: 'form', id: formID} as BasicAttributes),
-  elements.img('/src/img/todo_list.svg', 'Todo list', 200, 200)
+  elements.img('/src/img/todo_list.svg', 'Todo list', {width: 200}),
+  elements.img('/src/img/todo_list.svg', 'Todo list'),
+  elements.video('/src/video/The_Wrong_Way_To_Use_Healing_Magic_Ttrailer.mp4')
 );
 
 document.getElementById(formID)?.addEventListener('submit', () => {
-  console.log('Form submitted')
+  document.getElementById('app')?.append(
+    elements.video('/src/video/Overlord_Opening.mp4', {width: document.documentElement.clientWidth, height: document.documentElement.clientHeight})
+  );
 });
