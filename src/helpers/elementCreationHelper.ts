@@ -1,17 +1,48 @@
-import { BasicAttributes } from "./IBasicAttributes";
+import { BasicAttributes } from "../models/IBasicAttributes";
 
 export const e = (() => {
     const DEFAULTS = {
         HEADING_CLASS: '' as HTMLElement['className']
     },
-    createElement = (e: HTMLElement['tagName'], bA?: BasicAttributes) => Object.assign(document.createElement(`${e}`), {id: bA?.id || '', className: bA?.className || ''}),
-    createHeading = (n: number, t: HTMLHeadingElement['innerHTML'], bA?: BasicAttributes) => Object.assign(createElement(`h${n}`, {className: `${DEFAULTS.HEADING_CLASS} ${bA?.className || ''}`.trim(), id: bA?.id || ''}) as HTMLHeadingElement, {innerHTML: t || ''}),
+    createElement = (e: HTMLElement['tagName'], bA?: BasicAttributes) => {
+        const element = document.createElement(e);
+
+        if (bA) {
+            if (bA.className && bA.id) {
+                Object.assign(element, {
+                    id: bA.id,
+                    className: bA.className
+                });
+            } else {
+                if (bA.className) {
+                    element.className;
+                } else if (bA.id) {
+                    element.id = bA.id;
+                }
+            }
+        }
+
+        return element
+    },
+    createAndAppend = (e: HTMLElement['tagName'], es?: HTMLElement[], bA?: BasicAttributes) => {
+        const el = createElement(e, bA);
+
+        if (es) {
+            el.append(...es);
+        }
+
+        return el;
+    },
+    createWithText = (e:HTMLElement['tagName'], t: HTMLElement['innerHTML'], bA?: BasicAttributes) => {
+        return Object.assign(createElement(e, bA), {
+            innerHTML: t || ''
+        });
+    },
+    createHeading = (n: number, t: HTMLHeadingElement['innerHTML'], bA?: BasicAttributes) => createWithText(`h${n}`, t, {className: `${DEFAULTS.HEADING_CLASS} ${bA?.className || ''}`.trim(), id: bA?.id || ''}) as HTMLHeadingElement,
     setScaleImgOrVideo = (e: HTMLImageElement | HTMLVideoElement, width?: HTMLImageElement['width'] | HTMLVideoElement['width'], height?: HTMLImageElement['height'] | HTMLVideoElement['height']) => {
         if (width) {
             e.width = width;
-        }
-
-        if (height) {
+        } else if (height) {
             e.height = height;
         }
     },
@@ -54,17 +85,29 @@ export const e = (() => {
                 return createHeading(6, text, basicAttributes);
             },
         },
-        div: (basicAttributes?: BasicAttributes) => {
-            return createElement('div', basicAttributes) as HTMLDivElement;
+        div: (elements?: HTMLElement[], basicAttributes?: BasicAttributes) => {
+            return createAndAppend('div', elements, basicAttributes) as HTMLDivElement;
         },
-        ul: (basicAttributes?: BasicAttributes) => {
-            return createElement('ul', basicAttributes) as HTMLUListElement;
+        header: (elements?: HTMLElement[], basicAttributes?: BasicAttributes) => {
+            return createAndAppend('header', elements, basicAttributes) as HTMLElement;
         },
-        li: (basicAttributes?: BasicAttributes) => {
-            return createElement('li', basicAttributes) as HTMLLIElement;
+        footer: (elements?: HTMLElement[], basicAttributes?: BasicAttributes) => {
+            return createAndAppend('footer', elements, basicAttributes) as HTMLElement;
         },
-        span: (basicAttributes?: BasicAttributes) => {
-            return createElement('span', basicAttributes) as HTMLSpanElement;
+        nav: (elements?: HTMLElement[], basicAttributes?: BasicAttributes) => {
+            return createAndAppend('nav', elements, basicAttributes) as HTMLElement;
+        },
+        ul: (elements?: HTMLLIElement[], basicAttributes?: BasicAttributes) => {
+            return createAndAppend('ul', elements, basicAttributes) as HTMLUListElement;
+        },
+        li: (elements?: HTMLElement[], basicAttributes?: BasicAttributes) => {
+            return createAndAppend('li', elements, basicAttributes) as HTMLLIElement;
+        },
+        p: (text: HTMLParagraphElement['innerHTML'], basicAttributes?: BasicAttributes) => {
+            return createWithText('p', text, basicAttributes) as HTMLParagraphElement;
+        },
+        span: (text: HTMLSpanElement['innerHTML'], basicAttributes?: BasicAttributes) => {
+            return createWithText('span', text, basicAttributes)
         },
         img: (src: HTMLImageElement['src'], alt: HTMLImageElement['alt'], optionalAttributes?: {width?: HTMLImageElement['width'], height?: HTMLImageElement['height']}, basicAttributes?: BasicAttributes) => {
             const i = Object.assign(createElement('img', basicAttributes) as HTMLImageElement, {
@@ -113,9 +156,7 @@ export const e = (() => {
             fieldset: (text: HTMLLegendElement['innerHTML'], elements?: {labels?: HTMLLabelElement[], inputs: HTMLInputElement[], buttons?: HTMLButtonElement[]}, basicAttributes?: BasicAttributes) => {
                 const f = createElement('fieldset', basicAttributes) as HTMLFieldSetElement;
                 
-                f.append(Object.assign(createElement('legend') as HTMLLegendElement, {
-                    innerHTML: text
-                }));
+                f.append(createWithText('legend', text) as HTMLLegendElement);
                 
                 if (elements) {
                     appendInputsAndLabels(f, {labels: elements?.labels, inputs: elements?.inputs});
@@ -124,8 +165,7 @@ export const e = (() => {
                 return f;
             },
             label: (text: HTMLLabelElement['innerHTML'], forInput: HTMLLabelElement['htmlFor'], basicAttributes?: BasicAttributes) => {
-                return Object.assign(createElement('label', basicAttributes) as HTMLLabelElement, {
-                    innerHTML: text, 
+                return Object.assign(createWithText('label', text, basicAttributes) as HTMLLabelElement, {
                     htmlFor: forInput
                 });
             },

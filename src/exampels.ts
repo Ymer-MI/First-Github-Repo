@@ -1,5 +1,5 @@
-import { e as elements } from "./helpers/elementCreationHelpers";
-import { BasicAttributes } from "./helpers/IBasicAttributes";
+import { e as elements } from "./helpers/elementCreationHelper";
+import { BasicAttributes } from "./models/IBasicAttributes";
 
 export const e = () => {
     const DEFAULT_HEADING_CLASSES = elements.settings.defaultHeadingClass.set('heading'), formID = 'testForm';
