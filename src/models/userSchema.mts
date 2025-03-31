@@ -1,13 +1,15 @@
-import { model, Schema } from "mongoose";
-import { todoSchema } from "./todoSchema.mjs";
+import { Schema, model } from "mongoose";
+
 
 const userSchema = new Schema({
-  id: { type: Number, required: true },
-  name: { type: String, required: true },
-  email: String,
-  adress: String,
-  todos: { type: [todoSchema], required: true },
+  username: { type: String, required: true, unique: true }, 
+  password: { type: String, required: true }, 
+  email: { type: String, required: true, unique: true }, 
+  createdAt: { type: Date, default: Date.now }, 
+  updatedAt: { type: Date, default: Date.now }, 
 });
 
-const User = model("user", userSchema);
+
+const User = model("User", userSchema);
+
 export default User;
